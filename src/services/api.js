@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./auth";
 
 const api = axios.create({
-  baseURL: "http://localhost/theTimeTracker-laravel/public/api"
+  baseURL: "http://localhost/laravel/theTimeTracker-laravel/public/api"
 });
 
 api.interceptors.request.use(async config => {

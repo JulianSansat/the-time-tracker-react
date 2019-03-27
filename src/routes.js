@@ -4,13 +4,16 @@ import { isAuthenticated } from "./services/auth";
 import Register from "./components/Pages/Register/Register";
 import Login from "./components/Pages/Login/Login";
 import Layout from "./components/Layout/Layout";
+import Home from "./components/Pages/Home/Home";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
       isAuthenticated() ? (
-        <Component {...props} />
+        <Layout>
+          <Component {...props} />
+        </Layout>
       ) : (
         <Redirect to={{ pathname: "/", state: { from: props.location } }} />
       )
@@ -36,7 +39,7 @@ const Routes = () => (
     <Switch>
       <LoginRoute exact path="/" component={Login} />
       <LoginRoute path="/register" component={Register}/>
-      <PrivateRoute path="/home" component={() => <Layout><h1>App</h1></Layout>} />
+      <PrivateRoute path="/home" component={Home} />
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   </BrowserRouter>

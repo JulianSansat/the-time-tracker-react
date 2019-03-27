@@ -1,6 +1,6 @@
 import api from './api';
 
-export const TOKEN_KEY = "access_token";
+export const TOKEN_KEY = "@timeTracker_access_token";
 export const isAuthenticated = () => {
     let token = localStorage.getItem(TOKEN_KEY);
     if(token === '' || token === undefined){
