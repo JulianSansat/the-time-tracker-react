@@ -62,10 +62,6 @@ class NavBar extends Component {
                   <a class="navbar-item">
                     Home
                   </a>
-
-                  <a class="navbar-item">
-                    Documentation
-                  </a>
                 </div>
 
                 <div class="navbar-end">

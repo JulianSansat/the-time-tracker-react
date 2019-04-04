@@ -11,6 +11,7 @@ class Home extends Component {
             logs: [],
             errorWarning: 'hide',
             selectedUser: '',
+            selectedTeam: '',
             year: '',
             month: '',
             day: '',
@@ -48,9 +49,27 @@ class Home extends Component {
         });
     }
 
+    resetFilters = () => {
+      this.setState({
+        selectedUser: '',
+        selectedTeam: '',
+        year: '',
+        month: '',
+        day: '',
+        days: [],
+        logFilters: [],
+      });
+      this.loadLogs()
+    }
+
     handleUserSelectChange = (selectedUser) => {
       this.setState({ selectedUser });
       this.filterLogs('user_id', selectedUser.user_id);
+    }
+
+    handleTeamSelectChange = (selectedTeam) => {
+      this.setState({ selectedTeam });
+      this.filterLogs('team_id', selectedTeam.team_id);
     }
 
     handleDateSelectChange = (e) => {
@@ -71,7 +90,6 @@ class Home extends Component {
           days: []
         })
       }
-      let date = '2018-01-01 00:00:00';
       let year = this.state.year;
       let month = this.state.month !== '' ? moment().month(this.state.month).format("MM") : '01';
       let day = this.state.day !== '' ? this.state.day : '01';
@@ -90,15 +108,6 @@ class Home extends Component {
         day = e.target.value !== '' ? moment().day(e.target.value).format("DD") : '';
         this.filterLogs('day', day);
       }
-
-      date = year+'-'+month+'-'+day+' 00:00:00';
-
-
-      if(e.target.name === 'date'){
-        if(moment(date).isValid()){
-          this.filterLogs('date', date);
-        }
-      }
     }
 
     filterLogs = (key, value) => {
@@ -108,6 +117,52 @@ class Home extends Component {
         logFilters: logFilters
       });
       this.loadLogs(logFilters);
+    }
+
+    filterTrailingMonths = () => {
+      this.setState({
+        selectedUser: '',
+        selectedTeam: ''
+      })
+
+      let startDate = moment().subtract(3, 'months').format('YYYY-MM-DD 00:00:00');
+      let endDate = moment().format('YYYY-MM-DD 23:59:59');
+
+      let params = {
+        start_date: startDate,
+        end_date: endDate
+      }
+      this.loadLogs(params)
+    }
+
+    filterCurrentMonth = () => {
+      this.setState({
+        selectedUser: '',
+        selectedTeam: ''
+      })
+
+      let sartOfMonth = moment().startOf('month').format("YYYY-MM-DD 00:00:00")
+      let endOfMonth = moment().endOf('month').format("YYYY-MM-DD 23:59:59")
+      let params = {
+        start_date: sartOfMonth,
+        end_date: endOfMonth
+      }
+      this.loadLogs(params)      
+    }
+
+    filterCurrentWeek = () => {
+      this.setState({
+        selectedUser: '',
+        selectedTeam: ''
+      })
+
+      let sartOfWeek = moment().startOf('week').format("YYYY-MM-DD 00:00:00")
+      let endOfWeek = moment().endOf('week').format("YYYY-MM-DD 23:59:59")
+      let params = {
+        start_date: sartOfWeek,
+        end_date: endOfWeek
+      }
+      this.loadLogs(params)
     }
 
     loadLogs = (filters) => {
@@ -155,6 +210,14 @@ class Home extends Component {
           });
         };
 
+        const promiseTeamsOptions = inputValue => {
+          return Api.get(`/teams`, {params:{name: inputValue}}).then(res => {
+            return res.data.data.map(obj => {
+              return {value: obj.id, label: obj.name, team_id: obj.id};
+            });
+          });
+        };
+
         return (
             <section className="section">
                 <div className="columns">
@@ -168,6 +231,20 @@ class Home extends Component {
                           onChange={this.handleUserSelectChange}
                           defaultOptions={true}
                           loadOptions={promiseOptions}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="column">
+                    <div class="field">
+                      <label class="label" for="teamSelect">Team</label>
+                      <div class="control">
+                        <AsyncSelect
+                          cacheOptions={true}
+                          value={this.state.selectedTeam}
+                          onChange={this.handleTeamSelectChange}
+                          defaultOptions={true}
+                          loadOptions={promiseTeamsOptions}
                         />
                       </div>
                     </div>
@@ -217,9 +294,35 @@ class Home extends Component {
                       </div>
                     </div>
                   </div>
+                  <div className="column">
+                      <div class="control">
+                        <a style={{marginTop: `2em`}} onClick={() => this.filterCurrentWeek()} className="button is-info">Current Week</a>
+                     </div>
+                  </div>
+
+                  <div className="column">
+                    <div class="control">
+                      <a style={{marginTop: `2em`}} onClick={() => this.filterCurrentMonth()} className="button is-info">Current Month</a>
+                    </div>
+                  </div>
+
+                  <div className="column">
+                    <div class="control">
+                      <a style={{marginTop: `2em`}} onClick={() => this.filterTrailingMonths()} className="button is-danger">Trailing 3 months</a>
+                    </div>
+                  </div>
+
+                  <div className="column">
+                    <div class="field">
+                      <div class="control">
+                        <a style={{marginTop: `2em`}} onClick={() => this.resetFilters()} className="button is-danger">Reset Filters</a>
+                     </div>
+                    </div>
+                  </div>
+
+
                 </div>
-                
-                
+              
                 <div className="box">
                     <article class={"message is-danger " + this.state.errorWarning}>
                       <div class="message-header">
