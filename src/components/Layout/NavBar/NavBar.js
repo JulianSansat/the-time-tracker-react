@@ -9,7 +9,6 @@ class NavBar extends Component {
 
     handleLogout = async e => {  
       try {
-        const response = await api.post("/auth/logout");
         logout();
         this.props.history.push("/");
       } catch (err) {

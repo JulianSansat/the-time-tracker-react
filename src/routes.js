@@ -5,6 +5,7 @@ import Register from "./components/Pages/Register/Register";
 import Login from "./components/Pages/Login/Login";
 import Layout from "./components/Layout/Layout";
 import Home from "./components/Pages/Home/Home";
+import Test from "./components/Pages/Home/Test";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -40,6 +41,7 @@ const Routes = () => (
       <LoginRoute exact path="/" component={Login} />
       <LoginRoute path="/register" component={Register}/>
       <PrivateRoute path="/home" component={Home} />
+      <PrivateRoute path="/test" component={Test} />
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   </BrowserRouter>

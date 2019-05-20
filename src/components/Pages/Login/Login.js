@@ -19,9 +19,9 @@ class SignIn extends Component {
       this.setState({ error: "Complete all fields to proced" });
     } else {
       try {
-        const response = await api.post("/auth/login", { email, password });
+        const response = await api.post("/login", { email, password });
         login(response.data.access_token);
-        this.props.history.push("/home");
+        this.props.history.push("/test");
       } catch (err) {
         this.setState({
           error:
