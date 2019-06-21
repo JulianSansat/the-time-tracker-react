@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { login } from "../../../actions";
 
 import Logo from "../../../assets/logo1.png";
-import api from "../../../services/api";
-import { login } from "../../../services/auth";
 
 class SignIn extends Component {
   state = {
@@ -18,16 +18,7 @@ class SignIn extends Component {
     if (!email || !password) {
       this.setState({ error: "Complete all fields to proced" });
     } else {
-      try {
-        const response = await api.post("/auth/login", { email, password });
-        login(response.data.access_token);
-        this.props.history.push("/home");
-      } catch (err) {
-        this.setState({
-          error:
-            'Unauthorized'
-        });
-      }
+      this.props.login(email, password);
     }
   };
 
@@ -36,20 +27,24 @@ class SignIn extends Component {
       <section className="section">
         <form onSubmit={this.handleSignIn}>
           <div className="field is-grouped is-grouped-centered">
-            <img src={Logo} alt="timetrackerlogo"/>
+            <img src={Logo} alt="timetrackerlogo" />
           </div>
-          {this.state.error && <div className="notification is-danger"><p>{this.state.error}</p></div>}
+          {this.state.error && (
+            <div className="notification is-danger">
+              <p>{this.state.error}</p>
+            </div>
+          )}
           <div className="field">
             <label className="label">Email</label>
             <div className="control has-icons-left has-icons-right">
-             <input
+              <input
                 type="email"
                 className="input"
                 placeholder="Email"
                 onChange={e => this.setState({ email: e.target.value })}
               />
               <span className="icon is-small is-left">
-                <i className="fa fa-envelope"></i>
+                <i className="fa fa-envelope" />
               </span>
             </div>
           </div>
@@ -63,16 +58,20 @@ class SignIn extends Component {
                 onChange={e => this.setState({ password: e.target.value })}
               />
               <span className="icon is-small is-left">
-                <i className="fa fa-lock"></i>
+                <i className="fa fa-lock" />
               </span>
             </p>
           </div>
           <div className="field is-grouped is-grouped-centered">
             <p className="control">
-              <button className="button is-primary" type="submit">Login</button>
+              <button className="button is-primary" type="submit">
+                Login
+              </button>
             </p>
             <p className="control">
-              <Link className="button is-light" to="/register">Create an account</Link>
+              <Link className="button is-light" to="/register">
+                Create an account
+              </Link>
             </p>
           </div>
         </form>
@@ -81,4 +80,9 @@ class SignIn extends Component {
   }
 }
 
-export default withRouter(SignIn);
+export default withRouter(
+  connect(
+    null,
+    { login }
+  )(SignIn)
+);
