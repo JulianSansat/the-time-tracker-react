@@ -1,12 +1,12 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { isAuthenticated } from "./services/auth";
-import Register from "./components/Pages/Register/Register";
-import Login from "./components/Pages/Login/Login";
 import Layout from "./components/Layout/Layout";
 import Home from "./components/Pages/Home/Home";
+import Register from "./components/Pages/Register/Register";
+import Login from "./components/Pages/Login/Login";
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
+export const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -21,7 +21,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 );
 
-const LoginRoute = ({ component: Component, ...rest }) => (
+export const LoginRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -34,15 +34,25 @@ const LoginRoute = ({ component: Component, ...rest }) => (
   />
 );
 
-const Routes = () => (
-  <BrowserRouter>
-    <Switch>
-      <LoginRoute exact path="/" component={Login} />
-      <LoginRoute path="/register" component={Register}/>
-      <PrivateRoute path="/home" component={Home} />
-      <Route path="*" component={() => <h1>Page not found</h1>} />
-    </Switch>
-  </BrowserRouter>
-);
+export const LoggedRoutes = () => {
+  return (
+    <BrowserRouter>
+      <Switch>
+        <PrivateRoute path="/home" component={Home} />
+        <Route path="*" component={() => <h1>Page not found</h1>} />
+      </Switch>
+    </BrowserRouter>
+  );
+};
 
-export default Routes;
+export const PublicRoutes = () => {
+  return (
+    <BrowserRouter>
+      <Switch>
+        <LoginRoute exact path="/" component={Login} />
+        <LoginRoute path="/register" component={Register} />
+        <Route path="*" component={() => <h1>Page not found</h1>} />
+      </Switch>
+    </BrowserRouter>
+  );
+};
